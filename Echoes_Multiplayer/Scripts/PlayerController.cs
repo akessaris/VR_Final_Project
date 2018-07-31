@@ -5,13 +5,15 @@ using UnityEngine.EventSystems;
 
 namespace Echoes_Multiplayer
 {
-    public class PlayerController : NetworkBehaviour, MonoBehaviour
+    public class PlayerController : NetworkBehaviour
     {
         private GameObject cam_Holder; //holds camera since GVR overrides camera's position
         private Camera[] cams;
         private Camera cam;
         private int cam_counter = 0;
         private GameObject NPC;
+
+        private NetworkStartPosition[] spawnPoints;
 
         public static Echoes_Multiplayer.PlayerController Instance;
 
@@ -28,7 +30,14 @@ namespace Echoes_Multiplayer
             }
             cams = Camera.allCameras;
             cam_Holder = GameObject.Find("Cam_Holder"); //get parent object of camera
-            GameObject.Find("Enemy").GetComponent<PlayerScript>().players.Add();
+        }
+
+        void Start()
+        {
+            if (isLocalPlayer)
+            {
+                spawnPoints = FindObjectsOfType<NetworkStartPosition>();
+            }
         }
 
         void Update()
@@ -70,6 +79,51 @@ namespace Echoes_Multiplayer
             GetComponent<Renderer>().material.SetColor("_Color", Color.blue); //set color of local player to blue
             cam = cams[cam_counter++]; //set new camera
             cam_Holder.transform.position = transform.position; //set position of camera's parent object to player
+       
+            //Add player object to list of targets
+            GameObject.Find("Enemy(Clone)").GetComponent<NPCController>().targets.Add(transform); //add this player to list of enemy's targets
+            Debug.Log("Added " + transform + " to " + GameObject.Find("Enemy(Clone)") + " which now contains " + GameObject.Find("Enemy(Clone)").GetComponent<NPCController>().targets.Count);//.GetComponent<NPCController>().targets);
+        }
+
+        //private void OnCollisionEnter(Collision collision)
+        //{
+        //    if (!isServer) return;
+        //    if (collision.gameObject.name == "Enemy(Clone)")
+        //    {
+        //        //Destroy(collision.gameObject);
+        //        //SceneManager.LoadScene("Main");
+        //        Debug.Log("Respawn");
+        //        RpcRespawn();
+        //    }
+        //}
+        private void OnTriggerEnter(Collider collider)
+        {
+            if (!isServer) return;
+            if (collider.gameObject.name == "Enemy(Clone)")
+            {
+                //Destroy(collision.gameObject);
+                //SceneManager.LoadScene("Main");
+                Debug.Log("Respawn");
+                RpcRespawn();
+            }
+        }
+
+        [ClientRpc]
+        void RpcRespawn()
+        {
+            if (isLocalPlayer)
+            {
+                // Set the spawn point to origin as a default value
+                Vector3 spawnPoint = Vector3.zero;
+
+                // If there is a spawn point array and the array is not empty, pick one at random
+                if (spawnPoints != null && spawnPoints.Length > 0)
+                {
+                    spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)].transform.position;
+                }
+                // Set the player’s position to the chosen spawn point
+                transform.position = spawnPoint;
+            }
         }
     }
 }
