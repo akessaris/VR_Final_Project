@@ -14,8 +14,9 @@ namespace Echoes_Multiplayer
         private GameObject NPC;
 
         private NetworkStartPosition[] spawnPoints;
-
         public static Echoes_Multiplayer.PlayerController Instance;
+
+        private Rigidbody rb;
 
         private void Awake()
         {
@@ -37,6 +38,7 @@ namespace Echoes_Multiplayer
             if (isLocalPlayer)
             {
                 spawnPoints = FindObjectsOfType<NetworkStartPosition>();
+                rb = GetComponent<Rigidbody>();
             }
         }
 
@@ -55,6 +57,10 @@ namespace Echoes_Multiplayer
             //Track rotation
             transform.rotation = cam.transform.rotation;
 
+            // Reset momentum of player
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
             //If trigger, fire and move
             if (Input.GetMouseButton(0))
             {
@@ -64,8 +70,8 @@ namespace Echoes_Multiplayer
                 Vector3 newPosition = forward * Time.deltaTime * 5.0f + transform.position;
 
                 //Constrain movement
-                newPosition.x = Mathf.Clamp(newPosition.x, -10, 10);
-                newPosition.z = Mathf.Clamp(newPosition.z, -10, 10);
+                newPosition.x = Mathf.Clamp(newPosition.x, -50, 50);
+                newPosition.z = Mathf.Clamp(newPosition.z, -50, 50);
 
                 //Update position
                 transform.position = newPosition; //move player
@@ -82,30 +88,12 @@ namespace Echoes_Multiplayer
        
             //Add player object to list of targets
             GameObject.Find("Enemy(Clone)").GetComponent<NPCController>().targets.Add(transform); //add this player to list of enemy's targets
-            Debug.Log("Added " + transform + " to " + GameObject.Find("Enemy(Clone)") + " which now contains " + GameObject.Find("Enemy(Clone)").GetComponent<NPCController>().targets.Count);//.GetComponent<NPCController>().targets);
         }
 
-        //private void OnCollisionEnter(Collision collision)
-        //{
-        //    if (!isServer) return;
-        //    if (collision.gameObject.name == "Enemy(Clone)")
-        //    {
-        //        //Destroy(collision.gameObject);
-        //        //SceneManager.LoadScene("Main");
-        //        Debug.Log("Respawn");
-        //        RpcRespawn();
-        //    }
-        //}
-        private void OnTriggerEnter(Collider collider)
+        private void OnCollisionEnter(Collision collision)
         {
-            if (!isServer) return;
-            if (collider.gameObject.name == "Enemy(Clone)")
-            {
-                //Destroy(collision.gameObject);
-                //SceneManager.LoadScene("Main");
-                Debug.Log("Respawn");
+            if (collision.gameObject.name == "Enemy(Clone)")
                 RpcRespawn();
-            }
         }
 
         [ClientRpc]
@@ -123,6 +111,17 @@ namespace Echoes_Multiplayer
                 }
                 // Set the player’s position to the chosen spawn point
                 transform.position = spawnPoint;
+
+                // Reset momentum of player
+                GetComponent<Rigidbody>().velocity = Vector3.zero;
+                GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+                // Reset NPC orientation
+                GameObject.Find("Enemy(Clone)").transform.LookAt(transform);
+
+                //Reset momentum of NPC
+                GameObject.Find("Enemy(Clone)").GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                GameObject.Find("Enemy(Clone)").GetComponent<Rigidbody>().velocity = Vector3.zero;
             }
         }
     }

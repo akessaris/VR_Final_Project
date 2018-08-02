@@ -14,7 +14,7 @@ namespace Echoes_Multiplayer
         public Transform target;
 
         //Speed of NPC
-        public float speed = 1;
+        public float speed = 2;
 
         void Awake()
         {
@@ -28,11 +28,9 @@ namespace Echoes_Multiplayer
             float step = speed * Time.deltaTime;
 
             //Check for new targets
-            Debug.Log("Players = " + GameObject.FindGameObjectsWithTag("Player").Length);
             foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player")) {
                 if (player.name == "Player(Clone)" && !targets.Contains(player.transform)) {
                     targets.Add(player.transform);
-                    Debug.Log("Added");
                 }
             }
 
@@ -42,11 +40,10 @@ namespace Echoes_Multiplayer
             else if (targets.Count != 0 && target == null) {
                 target = targets[0];
             }
-            Debug.Log("Current target = " + target + " out of " + targets.Count);
-
+            transform.LookAt(target);
         }
 
-        private Transform findTarget(Transform target)
+        public Transform findTarget(Transform target)
         {
             //need to find way to access all players
             foreach (Transform player in targets)
@@ -54,6 +51,7 @@ namespace Echoes_Multiplayer
                 if (Vector3.Distance(player.position, transform.position) < Vector3.Distance(target.position, transform.position))
                 {
                     target = player;
+                    transform.LookAt(target);
                 }
             }
             return target;
