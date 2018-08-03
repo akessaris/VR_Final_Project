@@ -17,26 +17,22 @@ namespace Echoes_Multiplayer
         public static Echoes_Multiplayer.PlayerController Instance;
 
         private Rigidbody rb;
+        public float speed = 5.0f;
 
         private void Awake()
         {
             //Singleton
             if (isLocalPlayer)
-            {
                 Destroy(this);
-            }
             else
-            {
                 Instance = this;
-            }
             cams = Camera.allCameras;
             cam_Holder = GameObject.Find("Cam_Holder"); //get parent object of camera
         }
 
         void Start()
         {
-            if (isLocalPlayer)
-            {
+            if (isLocalPlayer) {
                 spawnPoints = FindObjectsOfType<NetworkStartPosition>();
                 rb = GetComponent<Rigidbody>();
             }
@@ -44,10 +40,8 @@ namespace Echoes_Multiplayer
 
         void Update()
         {
-            if (!isLocalPlayer)
-            {
-                return;
-            }
+            if (!isLocalPlayer) return;
+
             //Switch cameras
             foreach (Camera i in cams) {
                 i.enabled = false;
@@ -58,10 +52,10 @@ namespace Echoes_Multiplayer
             transform.rotation = cam.transform.rotation;
 
             // Reset momentum of player
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
-            GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
-            //If trigger, fire and move
+            //If trigger, move
             if (Input.GetMouseButton(0))
             {
                 //Calculate where to move
@@ -78,6 +72,34 @@ namespace Echoes_Multiplayer
             }
             //Update camera (parent) position
             cam_Holder.transform.position = transform.position;
+
+            //=========== CASEY CHANGES HERE
+            //// Reset momentum of player
+            //transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            //transform.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+            //rb.velocity = transform.forward * 0;
+            //transform.rotation = cam.transform.rotation;
+            //cam_Holder.transform.position = transform.position;
+            ////If trigger, fire and move
+            //if (Input.GetMouseButton(0))
+            //{
+            //    //Calculate where to move
+            //    Vector3 forward = transform.forward;
+            //    forward.y = 0;
+            //    //Vector3 newPosition = forward * Time.deltaTime * speed + transform.position;
+            //    rb.velocity = forward * speed;
+            //    //Constrain movement
+            //    // newPosition.x = Mathf.Clamp(newPosition.x, -15, 15);
+            //    //newPosition.z = Mathf.Clamp(newPosition.z, -15, 15);
+
+            //    //Update position
+            //    // transform.position = newPosition; //move player
+
+            //    //Update camera (parent) position
+
+            //}
+            //=========== END CASEY CHANGES HERE
         }
 
         public override void OnStartLocalPlayer()
@@ -85,18 +107,18 @@ namespace Echoes_Multiplayer
             GetComponent<Renderer>().material.SetColor("_Color", Color.blue); //set color of local player to blue
             cam = cams[cam_counter++]; //set new camera
             cam_Holder.transform.position = transform.position; //set position of camera's parent object to player
-       
-            //Add player object to list of targets
-            GameObject.Find("Enemy(Clone)").GetComponent<NPCController>().targets.Add(transform); //add this player to list of enemy's targets
         }
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.name == "Enemy(Clone)")
+            if (!isLocalPlayer) return;
+
+            //If localPlayer collides with the enemy, respawn the player
+            if (collision.gameObject.name == "Enemy(Clone)") {
                 RpcRespawn();
+            }
         }
 
-        [ClientRpc]
         void RpcRespawn()
         {
             if (isLocalPlayer)
@@ -120,8 +142,8 @@ namespace Echoes_Multiplayer
                 GameObject.Find("Enemy(Clone)").transform.LookAt(transform);
 
                 //Reset momentum of NPC
-                GameObject.Find("Enemy(Clone)").GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-                GameObject.Find("Enemy(Clone)").GetComponent<Rigidbody>().velocity = Vector3.zero;
+                //GameObject.Find("Enemy(Clone)").GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                //GameObject.Find("Enemy(Clone)").GetComponent<Rigidbody>().velocity = Vector3.zero;
             }
         }
     }

@@ -98,8 +98,8 @@ GameObject:
   - component: {fileID: 114813616497453094}
   - component: {fileID: 114989699121423736}
   - component: {fileID: 65319842686346510}
-  - component: {fileID: 54726207904877434}
   - component: {fileID: 82662601449891666}
+  - component: {fileID: 54153401503379490}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -417,7 +417,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1099197566066918}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &54726207904877434
+--- !u!54 &54153401503379490
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -744,6 +744,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604fe44940c964887b5a67781a662b02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 2
 --- !u!114 &114925931582168928
 MonoBehaviour:
   m_ObjectHideFlags: 1
