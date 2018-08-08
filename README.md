@@ -1,5 +1,5 @@
 #  Echoes 
-For our project, we will be developing a horror game called Echoes. In this experience, players will be spawned into a procedurally generated forest at night, and, since it’s a horror game, they won’t be alone. An NPC (non-playable-character) will spawn into the map, and it will always move towards the player that is closest to it at any given time. If the NPC “catches” (or collides) with a player, the player will be lose a life. Once the player loses all of it's life, the player is elminated.The last person standing wins. Although visibility will be limited, players will be able to view the space in their immediate proximity. 
+For our project, we will be developing a horror game called Echoes. In this experience, players will be spawned into a procedurally generated forest at night, and, since it’s a horror game, they won’t be alone. An NPC (non-playable-character) will spawn into the map, and it will always move towards the player that is closest to it at any given time. If the NPC “catches” (or collides) with a player, the player will lose a life. Once the player loses all of it's life, the player is elminated.The last person standing wins. Although visibility will be limited, players will be able to view the space in their immediate proximity. 
 
 ## MVP
 * 4 players + 1 NPC
