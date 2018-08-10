@@ -27,7 +27,9 @@ namespace Echoes_Multiplayer
         // Update is called once per frame
         void Update()
         {
-            if (!isServer) return;
+            if (!isServer) {
+                return;
+            } 
 
 
             float step = speed * Time.deltaTime;

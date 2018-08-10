@@ -36,7 +36,6 @@ namespace Echoes_Multiplayer
             {
                 if (destroyOnDeath)
                 {
-                    //RpcEliminate();
                 }
                 else
                 {

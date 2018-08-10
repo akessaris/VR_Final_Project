@@ -38,31 +38,11 @@ namespace Echoes_Multiplayer {
             if (multi == true && remaingingPlayersVal == 1) {
                 //Declare winner
                 Debug.Log("Winner!");
-
-                //Get player object's transform
-                List<Transform> players = GameObject.Find("true_scarecrow(Clone)").GetComponent<NPCController>().targets;
-                GameObject survivor;
-
-                foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
-                    if (player.name == "Player(Clone)" && player.GetComponent<PlayerController>().dead != true) {
-                        survivor = player;
-                        //Declare player winner and dead (so NPC stops chasing them)
-                        survivor.transform.GetComponent<PlayerController>().winner = true;
-                        survivor.transform.GetComponent<PlayerController>().dead = true;
-
-                        //Teleport them to winner's room
-                        survivor.transform.position = new Vector3(0, -97.5f, -3);
-                    }
             }
         }
 
         public void OnChangePlayers(int remaingingPlayersVal) {
             remainingPlayersText.text = remaingingPlayersVal.ToString() + " Remaining";
         }
-
-        //void RpcRespawnWinner() {
-        //    if (isLocalPlayer)
-        //        transform
-        //}
     }
 }

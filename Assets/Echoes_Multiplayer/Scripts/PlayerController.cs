@@ -144,15 +144,39 @@ namespace Echoes_Multiplayer
             }
             cam.enabled = true;
 
+            Debug.Log("pos " + transform.position);
+
             //Track rotation
             transform.rotation = cam.transform.rotation;
 
-            if (winner)
+            Debug.Log("winner = " + winner);
+
+            bool lastManStanding = true;
+            //Debug.Log(";looking if anyone else is alive");
+            foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
             {
-                transform.rotation = cam.transform.rotation;
-                cam_Holder.transform.position = transform.position;
-                return;
+                if (player.name == "Player(Clone)" && player.GetComponent<Lives>().currentLives >= 0 && player.transform != transform)
+                {
+                    Debug.Log("someone else is still alive");
+                    lastManStanding = false;
+                }
+
             }
+            //Debug.Log("if no one else is alive teleport to winner")
+            if(lastManStanding && GetComponent<Lives>().currentLives > 0){
+                Debug.Log("no one is alive");
+                transform.position = new Vector3(0, -97.5f, -3);
+                GetComponent<PlayerController>().cam_Holder.transform.position = new Vector3(0, -97.5f, -3);
+            }
+
+                //if (player.name == "Player(Clone)" && player.GetComponent<PlayerController>().winner == true) {
+                //    Debug.Log("this is winner");
+                //    //RpcWin(player.transform);
+                //    player.transform.position = new Vector3(0, -97.5f, -3);
+                //    player.GetComponent<PlayerController>().cam_Holder.transform.position = new Vector3 (0, -97.5f, -3);
+                //    player.GetComponent<PlayerController>().winner = false;
+                //    return;
+                //}
 
             //If trigger, move
             if (Input.GetMouseButton(0))
@@ -254,6 +278,12 @@ namespace Echoes_Multiplayer
 
                 //Remove them from list of targets
                 GameObject.Find("true_scarecrow(Clone)").GetComponent<NPCController>().targets.Remove(gameObject.transform);
+            }
+        }
+
+        void RpcWin(Transform player){
+            if (isLocalPlayer) {
+                player.transform.position = new Vector3(0, -97.5f, -3);
             }
         }
     }

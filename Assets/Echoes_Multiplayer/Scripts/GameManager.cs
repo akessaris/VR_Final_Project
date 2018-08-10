@@ -61,27 +61,8 @@ namespace Echoes_Multiplayer
             //If player is dead, decrease player count
             if (players[playerId] <= 0) {
                 lastPlayerId--;
+                LastIdText.text = "Remaining players: " + lastPlayerId.ToString();
             }
-
-            //if (players[playerId] <= 0) {
-            //    RpcEliminate();
-            //}
-        }
-
-        [ClientRpc]
-        void RpcEliminate()
-        {
-            //if (isLocalPlayer)
-            //{
-            //    //Declare the player dead
-            //    GetComponent<PlayerController>().dead = true;
-
-            //    //Put them in "spectator mode"
-            //    transform.position = new Vector3(0, 100, 0);
-
-            //    //Remove them from list of targets
-            //    GameObject.Find("true_scarecrow(Clone)").GetComponent<NPCController>().targets.Remove(gameObject.transform);
-            //}
         }
 
         // this increments lastPlayerId and adds an entry in the scoreboard array
